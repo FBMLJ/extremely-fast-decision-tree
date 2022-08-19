@@ -4,7 +4,7 @@
 #include<math.h>
 #define NUMERO_ATRIBUTO 4
 #define NUM_LABEL 3
-#define DELTA 0.2
+#define DELTA 0.5
 
 
 // criando os atributos
@@ -160,7 +160,7 @@ void adiciona_na_arvore(int *vetor, ARVORE* arv, ATRIBUTO **atributos){
     float dif = maior1 -maior2;
     // realiza a divisão
     if (dif != 0 && dif> calcula_limite(arv->contador_de_elementos) && (id2 !=-1)){
-        printf("dividi %d\n",arv->contador_de_elementos);
+        printf("dividi %d  %d\n",arv->contador_de_elementos,id1);
         arv->id_atributo = id1;
         arv->filhos =(ARVORE**) malloc(sizeof(ARVORE*) * atributos[id1]->numero_de_valor_distinto);
         for(int i=0; i < NUMERO_ATRIBUTO;i++) 
@@ -178,7 +178,7 @@ void adiciona_na_arvore(int *vetor, ARVORE* arv, ATRIBUTO **atributos){
 }
 
 
-int predict(int *vetor, ARVORE * arv, ATRIBUTO ** atributos){
+int predicao(int *vetor, ARVORE * arv, ATRIBUTO ** atributos){
 //Serial.println("===");
   while(arv->id_atributo != -1){
         int id_do_filho = find_id(vetor[arv->id_atributo], atributos[arv->id_atributo]) ;
@@ -198,3 +198,19 @@ int predict(int *vetor, ARVORE * arv, ATRIBUTO ** atributos){
      return id;
   
   }
+
+int calcula_memoria(ARVORE *arv,ATRIBUTO** atributos){
+    int somatorio = sizeof(ARVORE);
+    if (arv->id_atributo == -1){
+        for(int j = 0; j < NUMERO_ATRIBUTO; j++){
+            somatorio+= arv->contador[j]->tamanho*sizeof(int);
+        }
+    }
+    else{
+        for(int j=0; j < atributos[arv->id_atributo]->numero_de_valor_distinto;j++){
+            somatorio += calcula_memoria(arv->filhos[j], atributos);
+        }
+
+    }
+    return somatorio;
+} 
